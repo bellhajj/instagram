@@ -7,14 +7,20 @@ $this->title = 'My Yii Application';
 <div class="site-index">
 
     <div class="jumbotron">
-        <h1>Congratulations!</h1>
+        <h1>Instagram</h1>
+        <?php if(Yii::$app->session->hasFlash('success')) { ?>
+            <div class='info'>
+                <?= Yii::$app->session->getFlash('success'); ?>
+            </div>
+        <?php } ?>
 
-        <p class="lead">You have successfully created your Yii-powered application.</p>
+        <p class="lead">This is an Instagram page that enable you to create an Account, 
+        like and view Posts and Follow users</p>
 
-        <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p>
+        <!--p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p-->
     </div>
 
-    <div class="body-content">
+    <!--div class="body-content">
 
         <div class="row">
             <div class="col-lg-4">
@@ -49,5 +55,5 @@ $this->title = 'My Yii Application';
             </div>
         </div>
 
-    </div>
+    </div-->
 </div>

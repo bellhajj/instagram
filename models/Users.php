@@ -71,9 +71,10 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'first_name' => 'First Name',
             'last_name' => 'Last Name',
             'date_of_birth' => 'Date Of Birth',
-            'profile_picture_url' => 'Upload Profile Picture',
+            'profile_picture_url' => 'Profile Picture',
             'bio' => 'Bio',
-            'join_date' => 'Join Date',            
+            'join_date' => 'Join Date', 
+            'upload' => 'Profile Picture',           
         ];
     }
 
@@ -108,6 +109,16 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 
     public function validatePassword($password){
         return Yii::$app->getSecurity()->validatePassword($password, $this->password);
+    }
+
+    public function checkFollow($id){
+        $user_logged_in = Yii::$app->user->identity->user_id;
+        if(Follower::find()->where(['user_id' => $user_logged_in])->exists()
+           && Follower::find()->where(['user_id_following' => $id])->exists()){               
+               return true; //Yes the logged in user is following him 
+           }else{
+               return false;
+           }
     }
 
     /**

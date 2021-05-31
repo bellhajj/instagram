@@ -3,17 +3,19 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\Comment;
-use app\models\CommentSearch;
+use app\models\Likes;
+use app\models\LikesSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
+
+use app\models\Post;
+use app\models\Users;
 
 /**
- * CommentController implements the CRUD actions for Comment model.
+ * LikesController implements the CRUD actions for Likes model.
  */
-class CommentController extends Controller
+class LikesController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -21,18 +23,6 @@ class CommentController extends Controller
     public function behaviors()
     {
         return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'only' => ['create', 'view', 'delete', 'update', 'index'],
-                'rules' => [                   
-                    [
-                        'actions' => ['create', 'view', 'delete', 'update', 'index'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                    
-                ],
-            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -42,13 +32,44 @@ class CommentController extends Controller
         ];
     }
 
+    public function actionLike(){
+
+        $postData =  Yii::$app->request->post();
+        $like = new Likes();
+        $postmodel = Post::findIdentity($postData['id']);
+        $usermodel = $postData['user'];
+        if(Yii::$app->request->isAjax){  
+            $like->user_id = Yii::$app->user->identity->user_id;
+            $like->post_id = $postmodel->post_id;
+            $like->user_id_liking = $usermodel;            
+            if($like->save(false)){ 
+                return $this->render('//post/view', ['model' => $postmodel]);
+            }            
+        }
+    }
+
+    public function actionUnlike(){
+
+        $postData =  Yii::$app->request->post();             
+        $id =  $postData['id'];   //id of post i like       
+        $usermodel = Users::findIdentity($postData['user']);   //User i liked his post
+        $postmodel = Post::findIdentity($id);
+        if(Yii::$app->request->isAjax){      
+             $user_logged_in = Yii::$app->user->identity->user_id; //currently logged in user
+             $like_id = Likes::getLikeID($id, $user_logged_in, $usermodel->user_id)->like_id;
+             //var_dump($like_id);      
+             $this->findModel($like_id)->delete();
+            return $this->render('//post/view', ['model' => $postmodel]);
+        }
+    }
+
     /**
-     * Lists all Comment models.
+     * Lists all Likes models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new CommentSearch();
+        $searchModel = new LikesSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -58,7 +79,7 @@ class CommentController extends Controller
     }
 
     /**
-     * Displays a single Comment model.
+     * Displays a single Likes model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -71,23 +92,17 @@ class CommentController extends Controller
     }
 
     /**
-     * Creates a new Comment model.
+     * Creates a new Likes model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($id)
+    public function actionCreate()
     {
-        $model = new Comment();
-        if ($model->load(Yii::$app->request->post())){
-            $model->user_id =  Yii::$app->user->identity->user_id;
-            $model->post_id = $id;
-            if($model->save()){
-                return $this->redirect(['view', 'id' => $model->comment_id]);
-            }
+        $model = new Likes();
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->like_id]);
         }
-        /*if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->comment_id]);
-        }*/
 
         return $this->render('create', [
             'model' => $model,
@@ -95,7 +110,7 @@ class CommentController extends Controller
     }
 
     /**
-     * Updates an existing Comment model.
+     * Updates an existing Likes model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -106,7 +121,7 @@ class CommentController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->comment_id]);
+            return $this->redirect(['view', 'id' => $model->like_id]);
         }
 
         return $this->render('update', [
@@ -115,7 +130,7 @@ class CommentController extends Controller
     }
 
     /**
-     * Deletes an existing Comment model.
+     * Deletes an existing Likes model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -129,18 +144,18 @@ class CommentController extends Controller
     }
 
     /**
-     * Finds the Comment model based on its primary key value.
+     * Finds the Likes model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Comment the loaded model
+     * @return Likes the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Comment::findOne($id)) !== null) {
+        if (($model = Likes::findOne($id)) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
-    }
+    }   
 }

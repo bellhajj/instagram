@@ -8,38 +8,68 @@ use yii\widgets\DetailView;
 
 $this->title = $model->user_id;
 $this->params['breadcrumbs'][] = ['label' => 'Users', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+//$this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="users-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->user_id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->user_id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
+    <!--h1><?php // Html::encode($this->title) ?></h1-->
+   
+    <?php if($model->checkFollow($model->user_id)) {  ?>
+    <p>    
+    <?= Html::button('Unfollow User', ['class' => 'btn btn-danger', 'onclick' => 'f2()']) ?>      
     </p>
+    <?php } else { ?>
+    <p>    
+    <?= Html::button('Follow User', ['class' => 'btn btn-primary', 'onclick' => 'f1()']) ?>
+    </p>
+    <?php } ?>
+     
 
     <?= DetailView::widget([
         'model' => $model,
-        'attributes' => [
-            'user_id',
+        'attributes' => [            
             'username',
-            'email:email',
-            'password',
+            'email:email',            
             'first_name',
             'last_name',
-            'date_of_birth',
+            'date_of_birth:date',
             'profile_picture_url:url',
-            'bio',
-            'join_date',
+            'bio',            
         ],
     ]) ?>
 
 </div>
+<script>
+
+function f2(){
+    $.ajax({        
+        type: 'POST',
+        url:  '/follower/unfollow',
+        data: {
+            id: <?php echo $model->user_id ?>
+        }, success: function(res) {   
+            console.log("Success"); 
+            location.reload(true);           
+        }, error: function(res) {
+            console.log("server error");
+        }
+    });
+    }
+
+    function f1(){
+    $.ajax({        
+        type: 'POST',
+        url:  '/follower/follow',
+        data: {
+            id: <?php echo $model->user_id ?>
+        }, success: function(res) {                                
+            console.log("Success");  
+            location.reload(true);         
+        }, error: function(res) {
+            console.log("server error");
+        }
+    });
+    }   
+
+</script>

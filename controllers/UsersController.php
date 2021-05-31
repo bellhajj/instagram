@@ -8,8 +8,10 @@ use app\models\UsersSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 use yii\web\UploadedFile;
+use app\models\Follower;
 
 /**
  * UsersController implements the CRUD actions for Users model.
@@ -22,6 +24,23 @@ class UsersController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['create', 'index', 'view', 'update', 'delete'],
+                'rules' => [
+                    [
+                        'actions' => ['create'],
+                        'allow' => true,
+                        'roles' => ['?'],
+                    ],
+                    [
+                        'actions' => ['index', 'view', 'update', 'delete'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                    
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -38,13 +57,32 @@ class UsersController extends Controller
     public function actionIndex()
     {
         $searchModel = new UsersSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, Yii::$app->user->identity->user_id);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
+
+    /*public function actionFollow($id){
+
+        $model = new Follower();
+        $searchModel = new UsersSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+            
+            $model->user_id = Yii::$app->user->identity->user_id;
+            $model->user_id_following = $id;
+            if($model->save(false)){
+                //To Display a message that he is following someone.
+                //Would like to use Ajax and redirect the user to same page
+                return $this->render('index', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                ]);
+            }      
+    }*/
+   
 
     /**
      * Displays a single Users model.
@@ -70,25 +108,20 @@ class UsersController extends Controller
 
         if ($model->load(Yii::$app->request->post())) {
             $model->upload = UploadedFile::getInstance($model, 'upload');
-            if ($model->validate()) {
-            if ($model->upload) { // if not null
+            if ($model->validate() && $model->upload !== null) {            
                 $dest = Yii::getAlias('@app/upload');
-                $filePath = ($dest . '/' . $model->upload->name . '.' . $model->upload->extension);
-        if ($model->upload->saveAs($filePath)) {
-            $model->profile_picture_url = $filePath;
-        }   
+                $filePath = ($dest . '/' . $model->upload->name);                
+                if ($model->upload->saveAs($filePath)) { //Saves in the upload folder
+                     $model->profile_picture_url = $filePath;
+                }  
+            if ($model->save(false)) {          
+                Yii::$app->session->setFlash('success', 'Your account was created successfully. 
+                Use your credential to login');           
+                return $this->goHome();
+            }
+            }  
         }
-        if ($model->save(false)) {
-            return $this->redirect(['view', 'id' => $model->user_id]);
-        }
-        }  
-        }    
-
-        return $this->render('create', [
-            'model' => $model,
-        ]); 
-
-     
+            return $this->render('create', ['model' => $model,]);     
     }
 
        /**
@@ -120,9 +153,10 @@ class UsersController extends Controller
      */
     public function actionDelete($id)
     {
+        Yii::$app->user->logout();        
         $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        Yii::$app->session->setFlash('success', 'Your account was deleted successfully');
+        return $this->goHome();        
     }
 
     /**

@@ -3,17 +3,18 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\Comment;
-use app\models\CommentSearch;
+use app\models\Follower;
+use app\models\FollowerSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
+
+use app\models\Users;
 
 /**
- * CommentController implements the CRUD actions for Comment model.
+ * FollowerController implements the CRUD actions for Follower model.
  */
-class CommentController extends Controller
+class FollowerController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -21,18 +22,6 @@ class CommentController extends Controller
     public function behaviors()
     {
         return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'only' => ['create', 'view', 'delete', 'update', 'index'],
-                'rules' => [                   
-                    [
-                        'actions' => ['create', 'view', 'delete', 'update', 'index'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                    
-                ],
-            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -42,13 +31,38 @@ class CommentController extends Controller
         ];
     }
 
+    public function actionFollow(){
+        $postData =  Yii::$app->request->post();
+        $follower = new Follower();
+        $usermodel = Users::findIdentity($postData['id']);
+        if(Yii::$app->request->isAjax){            
+            $follower->user_id = Yii::$app->user->identity->user_id;
+            $follower->user_id_following = $usermodel->user_id;         
+        if($follower->save(false)){                    
+             return $this->render('//users/view', ['model' => $usermodel]);            
+        } 
+    }   
+    }
+
+    public function actionUnfollow(){
+        $postData =  Yii::$app->request->post();             
+        $id =  $postData['id'];   //id of user i like his page        
+        $usermodel = Users::findIdentity($id);   //User i liked his page
+        if(Yii::$app->request->isAjax){      
+             $user_logged_in = Yii::$app->user->identity->user_id; //currently logged in user
+             $follower_id = Follower::getFollowerID($id, $user_logged_in)->follower_id;      
+             $this->findModel($follower_id)->delete();
+            return $this->render('//users/view', ['model' => $usermodel]);
+        }
+    }
+
     /**
-     * Lists all Comment models.
+     * Lists all Follower models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new CommentSearch();
+        $searchModel = new FollowerSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -58,7 +72,7 @@ class CommentController extends Controller
     }
 
     /**
-     * Displays a single Comment model.
+     * Displays a single Follower model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -71,23 +85,17 @@ class CommentController extends Controller
     }
 
     /**
-     * Creates a new Comment model.
+     * Creates a new Follower model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($id)
+    public function actionCreate()
     {
-        $model = new Comment();
-        if ($model->load(Yii::$app->request->post())){
-            $model->user_id =  Yii::$app->user->identity->user_id;
-            $model->post_id = $id;
-            if($model->save()){
-                return $this->redirect(['view', 'id' => $model->comment_id]);
-            }
+        $model = new Follower();
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->follower_id]);
         }
-        /*if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->comment_id]);
-        }*/
 
         return $this->render('create', [
             'model' => $model,
@@ -95,7 +103,7 @@ class CommentController extends Controller
     }
 
     /**
-     * Updates an existing Comment model.
+     * Updates an existing Follower model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -106,7 +114,7 @@ class CommentController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->comment_id]);
+            return $this->redirect(['view', 'id' => $model->follower_id]);
         }
 
         return $this->render('update', [
@@ -115,7 +123,7 @@ class CommentController extends Controller
     }
 
     /**
-     * Deletes an existing Comment model.
+     * Deletes an existing Follower model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -129,15 +137,15 @@ class CommentController extends Controller
     }
 
     /**
-     * Finds the Comment model based on its primary key value.
+     * Finds the Follower model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Comment the loaded model
+     * @return Follower the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Comment::findOne($id)) !== null) {
+        if (($model = Follower::findOne($id)) !== null) {
             return $model;
         }
 

@@ -21,7 +21,8 @@ $config = [
         ],
         'user' => [
             'identityClass' => 'app\models\Users',
-            'enableAutoLogin' => true,
+            'enableAutoLogin' => false,
+            'authTimeout' => (60*20), //20 minutes login time when idle
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -43,14 +44,14 @@ $config = [
             ],
         ],
         'db' => $db,
-        /*
+        
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
             ],
         ],
-        */
+        
     ],
     'params' => $params,
 ];

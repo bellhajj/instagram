@@ -40,7 +40,14 @@ AppAsset::register($this);
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
             ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'Post', 'url' => ['/post/index'],
+            ['label' => 'Create Account', 'url' => ['/users/create'],
+            'visible' => Yii::$app->user->isGuest],
+            ['label' => 'Post', 'url' => ['/post/index'], 'visible' => !Yii::$app->user->isGuest,
+            'items' => [
+                ['label' => 'All Posts', 'url' => ['/post/index']],
+                ['label' => 'User Post', 'url' => ['/post/user']],
+            ]],
+            ['label' => 'Users', 'url' => ['/users/index'],
             'visible' => !Yii::$app->user->isGuest],
             //['label' => 'About', 'url' => ['/site/about']],
            // ['label' => 'Contact', 'url' => ['/site/contact']],
@@ -72,9 +79,9 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
+        <p class="pull-left">&copy; Bello Hadji <?= date('Y') ?></p>
 
-        <p class="pull-right"><?= Yii::powered() ?></p>
+        <!--p class="pull-right"><?php //Yii::powered() ?></p-->        
     </div>
 </footer>
 

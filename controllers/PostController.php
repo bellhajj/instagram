@@ -9,6 +9,8 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
+use app\models\Likes;
+use yii\filters\AccessControl;
 
 /**
  * PostController implements the CRUD actions for Post model.
@@ -21,6 +23,18 @@ class PostController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['index', 'view', 'create', 'user'],
+                'rules' => [                   
+                    [
+                        'actions' => ['index', 'view', 'create', 'user'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                    
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -44,6 +58,29 @@ class PostController extends Controller
             'dataProvider' => $dataProvider,
         ]);
     }
+
+    public function actionUser(){
+
+        $searchModel = new PostSearch();       
+        $dataProvider = $searchModel->searchUserPost(Yii::$app->request->queryParams, Yii::$app->user->identity->user_id);
+
+        return $this->render('userindex', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+   /* public function actionLike($id, $post){
+        $model = new Likes();
+        $model->user_id = Yii::$app->user->identity->user_id;
+        $model->user_id_liking = $id;
+        $model->post_id = $post;
+        if($model->save(false)){
+            return $this->render('view', [
+                'model' => $this->findModel($post),
+            ]);
+        }    
+    }*/
 
     /**
      * Displays a single Post model.
@@ -117,7 +154,7 @@ class PostController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id)
-    {
+    {               
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

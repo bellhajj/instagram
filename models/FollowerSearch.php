@@ -4,12 +4,12 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Users;
+use app\models\Follower;
 
 /**
- * UsersSearch represents the model behind the search form of `app\models\Users`.
+ * FollowerSearch represents the model behind the search form of `app\models\Follower`.
  */
-class UsersSearch extends Users
+class FollowerSearch extends Follower
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,7 @@ class UsersSearch extends Users
     public function rules()
     {
         return [
-            [['user_id'], 'integer'],
-            [['username', 'email', 'password', 'first_name', 'last_name', 'date_of_birth', 'profile_picture_url', 'bio', 'join_date'], 'safe'],
+            [['follower_id', 'user_id', 'user_id_following'], 'integer'],
         ];
     }
 
@@ -38,9 +37,9 @@ class UsersSearch extends Users
      *
      * @return ActiveDataProvider
      */
-    public function search($params, $user_id)
+    public function search($params)
     {
-        $query = Users::find()->where(['<>', 'user_id', $user_id]);
+        $query = Follower::find();
 
         // add conditions that should always apply here
 
@@ -58,18 +57,10 @@ class UsersSearch extends Users
 
         // grid filtering conditions
         $query->andFilterWhere([
+            'follower_id' => $this->follower_id,
             'user_id' => $this->user_id,
-            'date_of_birth' => $this->date_of_birth,
-            'join_date' => $this->join_date,
+            'user_id_following' => $this->user_id_following,
         ]);
-
-        $query->andFilterWhere(['like', 'username', $this->username])
-            ->andFilterWhere(['like', 'email', $this->email])
-            ->andFilterWhere(['like', 'password', $this->password])
-            ->andFilterWhere(['like', 'first_name', $this->first_name])
-            ->andFilterWhere(['like', 'last_name', $this->last_name])
-            ->andFilterWhere(['like', 'profile_picture_url', $this->profile_picture_url])
-            ->andFilterWhere(['like', 'bio', $this->bio]);
 
         return $dataProvider;
     }

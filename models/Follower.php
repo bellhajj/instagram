@@ -45,6 +45,12 @@ class Follower extends \yii\db\ActiveRecord
         ];
     }
 
+    public static function getFollowerID($id, $user_id){
+      
+        return Follower::find()->where(['user_id'=>$user_id, 'user_id_following' => $id])->one();
+        
+     }
+
     /**
      * Gets query for [[User]].
      *

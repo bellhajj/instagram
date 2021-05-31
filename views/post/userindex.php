@@ -7,31 +7,27 @@ use yii\grid\GridView;
 /* @var $searchModel app\models\PostSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'All Posts';
+$this->title = 'User Posts';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="post-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <!--img src="/photos/shoes01.jpg" height="100" width="100"-->
-    <!--img src="C:\Users\bgdha\Desktop\instagram/photos/shoes01.jpg" height="100" width="100"-->
-    <!--img src="<?php //Yii::$app->request->baseUrl ?>/photos/shoes01.jpg" height="100" width="100"-->
+    <p>
+        <?= Html::a('Create Post', ['create'], ['class' => 'btn btn-success']) ?>
+    </p>
 
-    <!--p>
-        <?php // Html::a('Create Post', ['create'], ['class' => 'btn btn-success']) ?>
-    </p-->
-    
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+           // ['class' => 'yii\grid\SerialColumn'],
 
             //'post_id',
-            'user.username',
+            //'user.username',
             'caption',
             //'image_url:img',
             [
@@ -47,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
             //['class' => 'yii\grid\ActionColumn'], 
 
             ['class' => 'yii\grid\ActionColumn',
-            'template' => '{view}'            
+            'template' => '{view} {delete}'            
             ], 
 
         ],
