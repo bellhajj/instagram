@@ -25,10 +25,10 @@ class PostController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'view', 'create', 'user'],
+                'only' => ['index', 'view', 'create', 'user', 'homee'],
                 'rules' => [                   
                     [
-                        'actions' => ['index', 'view', 'create', 'user'],
+                        'actions' => ['index', 'view', 'create', 'user', 'homee'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -59,6 +59,12 @@ class PostController extends Controller
         ]);
     }
 
+    public function actionHomee(){
+        
+        $model = Post::find()->all();
+        return $this->render('homee', ['model' => $model]);
+    }
+
     public function actionUser(){
 
         $searchModel = new PostSearch();       
@@ -70,17 +76,6 @@ class PostController extends Controller
         ]);
     }
 
-   /* public function actionLike($id, $post){
-        $model = new Likes();
-        $model->user_id = Yii::$app->user->identity->user_id;
-        $model->user_id_liking = $id;
-        $model->post_id = $post;
-        if($model->save(false)){
-            return $this->render('view', [
-                'model' => $this->findModel($post),
-            ]);
-        }    
-    }*/
 
     /**
      * Displays a single Post model.
@@ -93,7 +88,7 @@ class PostController extends Controller
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
-    }
+    }   
 
     /**
      * Creates a new Post model.
@@ -104,19 +99,20 @@ class PostController extends Controller
     {
         $model = new Post();
         if ($model->load(Yii::$app->request->post())){
-            $model->photos = UploadedFile::getInstance($model, 'photos');
+            $model->image = UploadedFile::getInstance($model, 'image');
             $model->user_id =  Yii::$app->user->identity->user_id;
             if($model->validate()){
-                if($model->photos !== null && $model->user_id !== null){
-                   
-                    $dest = Yii::getAlias('@app/photos');
-                    $filePath = ($dest . '/' . $model->photos->name);
-                    if($model->photos->saveAs($filePath)){
+                if($model->image !== null && $model->user_id !== null){                   
+                    
+                    $rnd = rand(0,9999);
+                    $filePath = 'photos/'.$model->image->baseName.$rnd.'.'.$model->image->extension;
+                    if($model->image->saveAs($filePath)){
                         $model->image_url = $filePath;
                     }
                 }
                 if($model->save(false)){
-                    return $this->redirect(['view', 'id' => $model->post_id]);
+                   // return $this->redirect(['view', 'id' => $model->post_id]);
+                   return $this->redirect(['homee']);
                 }
             }
         }       

@@ -54,7 +54,7 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             [['username'], 'unique'],
             [['email'], 'unique'],
             [['email'], 'email'],
-            [['upload'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
+            [['upload'], 'file', 'skipOnEmpty' => false, 'extensions' => 'png, jpg, jpeg'],
         ];
     }
 
@@ -111,10 +111,10 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
         return Yii::$app->getSecurity()->validatePassword($password, $this->password);
     }
 
-    public function checkFollow($id){
+    
+    public static function checkFollow($id){
         $user_logged_in = Yii::$app->user->identity->user_id;
-        if(Follower::find()->where(['user_id' => $user_logged_in])->exists()
-           && Follower::find()->where(['user_id_following' => $id])->exists()){               
+        if(Follower::find()->where(['user_id' => $user_logged_in, 'user_id_following' => $id])->exists()){               
                return true; //Yes the logged in user is following him 
            }else{
                return false;

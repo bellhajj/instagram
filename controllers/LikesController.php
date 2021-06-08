@@ -11,6 +11,8 @@ use yii\filters\VerbFilter;
 
 use app\models\Post;
 use app\models\Users;
+use app\models\Comment;
+use yii\filters\AccessControl;
 
 /**
  * LikesController implements the CRUD actions for Likes model.
@@ -23,6 +25,18 @@ class LikesController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['like', 'pagelikecomment', 'unlike'],
+                'rules' => [                   
+                    [
+                        'actions' => ['like', 'pagelikecomment', 'unlike'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                    
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -46,6 +60,12 @@ class LikesController extends Controller
                 return $this->render('//post/view', ['model' => $postmodel]);
             }            
         }
+    }
+
+    public function actionPagelikecomment($post){
+        $model = Post::find()->where(['post_id' => $post])->one();
+        $comments = Comment::find()->where(['post_id' => $post])->all();
+        return $this->render('//post/vue', ['model' => $model, 'comment' => $comments]);
     }
 
     public function actionUnlike(){

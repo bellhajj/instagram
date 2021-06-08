@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <!--img src="/photos/shoes01.jpg" height="100" width="100"-->
+    <img src="/photos/passport5734.png" height="100" width="100">
     <!--img src="C:\Users\bgdha\Desktop\instagram/photos/shoes01.jpg" height="100" width="100"-->
     <!--img src="<?php //Yii::$app->request->baseUrl ?>/photos/shoes01.jpg" height="100" width="100"-->
 
@@ -36,7 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
             //'image_url:img',
             [
                 'attribute' => 'image_url',
-                //'format' => 'html',
+                'format' => 'html',
                 'label' => 'Picture',
                 'value' => function($data){
                     return Html::img($data->image_url, ['alt' => 'Picture']);                 

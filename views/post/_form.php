@@ -13,7 +13,7 @@ use app\models\Post;
 
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
     <?php if($model->post_id === null){ ?>
-    <?= $form->field($model, 'photos')->fileInput() ?>
+    <?= $form->field($model, 'image')->fileInput() ?>
     <?php } else { ?>
     <?php $model->photos = Post::findOne($model->post_id)->image_url;         
         }

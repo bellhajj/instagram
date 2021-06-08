@@ -44,11 +44,12 @@ AppAsset::register($this);
             'visible' => Yii::$app->user->isGuest],
             ['label' => 'Post', 'url' => ['/post/index'], 'visible' => !Yii::$app->user->isGuest,
             'items' => [
-                ['label' => 'All Posts', 'url' => ['/post/index']],
-                ['label' => 'User Post', 'url' => ['/post/user']],
+               // ['label' => 'All Posts', 'url' => ['/post/index']],
+               ['label' => 'User Post', 'url' => ['/post/user']],
+               ['label' => 'All Posts', 'url' => ['/post/homee']],
             ]],
-            ['label' => 'Users', 'url' => ['/users/index'],
-            'visible' => !Yii::$app->user->isGuest],
+            /*['label' => 'Users', 'url' => ['/users/index'],
+            'visible' => !Yii::$app->user->isGuest],*/
             //['label' => 'About', 'url' => ['/site/about']],
            // ['label' => 'Contact', 'url' => ['/site/contact']],
             Yii::$app->user->isGuest ? (

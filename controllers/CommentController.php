@@ -94,6 +94,22 @@ class CommentController extends Controller
         ]);
     }
 
+    public function actionCreatecomment($id){
+
+        $model = new Comment();
+        if ($model->load(Yii::$app->request->post())){
+            $model->user_id =  Yii::$app->user->identity->user_id;
+            $model->post_id = $id;
+            if($model->save()){
+                return $this->redirect(['//likes/pagelikecomment', 'post' => $id]);
+            }
+        }       
+
+        return $this->render('create', [
+            'model' => $model,
+        ]);
+    }
+
     /**
      * Updates an existing Comment model.
      * If update is successful, the browser will be redirected to the 'view' page.

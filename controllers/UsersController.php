@@ -12,6 +12,7 @@ use yii\filters\AccessControl;
 
 use yii\web\UploadedFile;
 use app\models\Follower;
+use app\models\Post;
 
 /**
  * UsersController implements the CRUD actions for Users model.
@@ -26,13 +27,8 @@ class UsersController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['create', 'index', 'view', 'update', 'delete'],
-                'rules' => [
-                    [
-                        'actions' => ['create'],
-                        'allow' => true,
-                        'roles' => ['?'],
-                    ],
+                'only' => ['index', 'view', 'update', 'delete'],
+                'rules' => [                   
                     [
                         'actions' => ['index', 'view', 'update', 'delete'],
                         'allow' => true,
@@ -65,23 +61,12 @@ class UsersController extends Controller
         ]);
     }
 
-    /*public function actionFollow($id){
+    public function actionProfile($user){
 
-        $model = new Follower();
-        $searchModel = new UsersSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-            
-            $model->user_id = Yii::$app->user->identity->user_id;
-            $model->user_id_following = $id;
-            if($model->save(false)){
-                //To Display a message that he is following someone.
-                //Would like to use Ajax and redirect the user to same page
-                return $this->render('index', [
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
-                ]);
-            }      
-    }*/
+        $model = Users::find()->where(['user_id' => $user])->one();
+        $post = Post::find()->all();
+        return $this->render('profile', ['model' => $model, 'post' => $post]);
+    }
    
 
     /**
@@ -108,12 +93,14 @@ class UsersController extends Controller
 
         if ($model->load(Yii::$app->request->post())) {
             $model->upload = UploadedFile::getInstance($model, 'upload');
-            if ($model->validate() && $model->upload !== null) {            
-                $dest = Yii::getAlias('@app/upload');
-                $filePath = ($dest . '/' . $model->upload->name);                
+            if ($model->validate()) {                           
+            if($model->upload !== null){
+                $rnd = rand(0,9999);
+                $filePath = 'upload/'.$model->upload->baseName.$rnd.'.'.$model->upload->extension;              
                 if ($model->upload->saveAs($filePath)) { //Saves in the upload folder
                      $model->profile_picture_url = $filePath;
                 }  
+            }
             if ($model->save(false)) {          
                 Yii::$app->session->setFlash('success', 'Your account was created successfully. 
                 Use your credential to login');           

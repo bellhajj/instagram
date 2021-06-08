@@ -22,7 +22,7 @@ use Yii;
 class Post extends \yii\db\ActiveRecord
 {
 
-    public $photos;
+    public $image;
     /**
      * {@inheritdoc}
      */
@@ -37,16 +37,16 @@ class Post extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'photos'], 'required'],
+            [['user_id', 'image'], 'required'],
             [['user_id', 'like_count'], 'integer'],
             [['date_posted'], 'safe'],
             [['caption', 'image_url'], 'string', 'max' => 50],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['user_id' => 'user_id']],
-            [['photos'], 'file', 'extensions' => 'png, jpg, jpeg'],        
+            [['image'], 'file', 'extensions' => 'png, jpg, jpeg'],        
         ];
     }
 
-    public function checkLike($id, $post_id){
+    /*public static function checkLike($id, $post_id){
         $logged_in_user = Yii::$app->user->identity->user_id;
         if(Likes::find()->where(['user_id' => $logged_in_user])->exists()
            && Likes::find()->where(['user_id_liking' => $id])->exists()
@@ -55,17 +55,18 @@ class Post extends \yii\db\ActiveRecord
            }else{
                return false;
            }
-    }
-
-   /* public function canDelete(){
-        $logged_in_user = Yii::$app->user->identity->user_id;
-        
-        if(Post::find()->where(['user_id' => $logged_in_user])->exists()){
-            return true;
-        }
     }*/
 
-   
+    public static function checkLike($id, $post_id){
+        $logged_in_user = Yii::$app->user->identity->user_id;
+        if(Likes::find()->where(['user_id' => $logged_in_user, 'user_id_liking' => $id, 'post_id' => $post_id])->exists()) {                            
+               return true; //Yes the logged in user has like the post 
+           }else{
+               return false;
+           }
+    }
+
+    
     /**
      * {@inheritdoc}
      */
