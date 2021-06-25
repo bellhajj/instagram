@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /* @var $model app\models\Post */
 
 $this->title = 'Post Photo';
-$this->params['breadcrumbs'][] = ['label' => 'Posts', 'url' => ['user']];
+//$this->params['breadcrumbs'][] = ['label' => 'Posts', 'url' => ['user']];
 //$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="post-create">

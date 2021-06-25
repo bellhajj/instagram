@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'text')->textArea(['maxlength' => true]) ?>
+    <?= $form->field($newComment, 'text')->textArea(['maxlength' => true]) ?>
     
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

@@ -58,15 +58,17 @@ class LikesController extends Controller
             $like->user_id_liking = $usermodel;            
             if($like->save(false)){ 
                 return $this->render('//post/view', ['model' => $postmodel]);
+                //return $this->refresh();
             }            
         }
     }
 
-    public function actionPagelikecomment($post){
+    /*public function actionPagelikecomment($post){
+        //$newComment = new Comment();
         $model = Post::find()->where(['post_id' => $post])->one();
         $comments = Comment::find()->where(['post_id' => $post])->all();
         return $this->render('//post/vue', ['model' => $model, 'comment' => $comments]);
-    }
+    }*/
 
     public function actionUnlike(){
 
@@ -79,7 +81,8 @@ class LikesController extends Controller
              $like_id = Likes::getLikeID($id, $user_logged_in, $usermodel->user_id)->like_id;
              //var_dump($like_id);      
              $this->findModel($like_id)->delete();
-            return $this->render('//post/view', ['model' => $postmodel]);
+             return $this->render('//post/view', ['model' => $postmodel]);
+           //return $this->refresh();
         }
     }
 

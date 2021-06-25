@@ -42,12 +42,10 @@ AppAsset::register($this);
             ['label' => 'Home', 'url' => ['/site/index']],
             ['label' => 'Create Account', 'url' => ['/users/create'],
             'visible' => Yii::$app->user->isGuest],
-            ['label' => 'Post', 'url' => ['/post/index'], 'visible' => !Yii::$app->user->isGuest,
-            'items' => [
-               // ['label' => 'All Posts', 'url' => ['/post/index']],
-               ['label' => 'User Post', 'url' => ['/post/user']],
-               ['label' => 'All Posts', 'url' => ['/post/homee']],
-            ]],
+            ['label' => 'Upload', 'url' => ['/post/user'],
+            'visible' => !Yii::$app->user->isGuest],
+            ['label' => 'Post', 'url' => ['/post/homee'], 
+            'visible' => !Yii::$app->user->isGuest],
             /*['label' => 'Users', 'url' => ['/users/index'],
             'visible' => !Yii::$app->user->isGuest],*/
             //['label' => 'About', 'url' => ['/site/about']],

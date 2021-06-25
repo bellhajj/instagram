@@ -12,21 +12,41 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
-    <?= $form->field($model, 'username')->textInput(['maxlength' => true]) ?>
+    <div class="row">
+        <div class="col-sm-6">
+            <?= $form->field($model, 'first_name')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-6">    
+            <?= $form->field($model, 'last_name')->textInput(['maxlength' => true]) ?>
+        </div>
+    </div>
 
-    <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
+    <div class="row">
+        <div class="col-sm-6">
+            <?= $form->field($model, 'password')->passwordInput(['maxlength' => true]) ?>            
+        </div>
+        <div class="col-sm-6">        
+            <?= $form->field($model, 'username')->textInput(['maxlength' => true]) ?>
+        </div>
+    </div>
 
-    <?= $form->field($model, 'password')->passwordInput(['maxlength' => true]) ?>
+    <div class="row">
+        <div class="col-sm-6">
+            <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-6">
+            <?= $form->field($model,'date_of_birth')->widget(yii\jui\DatePicker::className(),['dateFormat' => 'yyyy-MM-dd', 'options' => ['class' => 'form-control']]) ?>
+        </div>
+    </div>
 
-    <?= $form->field($model, 'first_name')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'last_name')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model,'date_of_birth')->widget(yii\jui\DatePicker::className(),['dateFormat' => 'yyyy-MM-dd', 'options' => ['class' => 'form-control']]) ?>
-
-    <?= $form->field($model, 'upload')->fileInput() ?>
-
-    <?= $form->field($model, 'bio')->textArea(['maxlength' => true]) ?>    
+    <div class="row">        
+        <div class="col-sm-6">
+            <?= $form->field($model, 'bio')->textArea(['maxlength' => true, 'rows' => '6', 'cols' => '3']) ?>
+        </div>
+        <div class="col-sm-6">
+            <?= $form->field($model, 'upload')->fileInput() ?>
+        </div>
+    </div>    
 
     <div class="form-group">
         <?= Html::submitButton('Create', ['class' => 'btn btn-success']) ?>

@@ -10,6 +10,8 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 
+use app\models\Post;
+
 /**
  * CommentController implements the CRUD actions for Comment model.
  */
@@ -77,38 +79,23 @@ class CommentController extends Controller
      */
     public function actionCreate($id)
     {
-        $model = new Comment();
-        if ($model->load(Yii::$app->request->post())){
-            $model->user_id =  Yii::$app->user->identity->user_id;
-            $model->post_id = $id;
-            if($model->save()){
-                return $this->redirect(['view', 'id' => $model->comment_id]);
+        $newComment = new Comment();
+        $model = Post::find()->where(['post_id' => $id])->one(); 
+        $comments = Comment::find()->where(['post_id' => $id])->all();
+        if ($newComment->load(Yii::$app->request->post())){
+            $newComment->user_id =  Yii::$app->user->identity->user_id;
+            $newComment->post_id = $id;
+            if($newComment->save()){
+               return $this->refresh();
             }
-        }
-        /*if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->comment_id]);
-        }*/
+        }    
 
         return $this->render('create', [
-            'model' => $model,
+            'newComment' => $newComment,
+            'comment' => $comments,
+            'model' => $model
         ]);
-    }
-
-    public function actionCreatecomment($id){
-
-        $model = new Comment();
-        if ($model->load(Yii::$app->request->post())){
-            $model->user_id =  Yii::$app->user->identity->user_id;
-            $model->post_id = $id;
-            if($model->save()){
-                return $this->redirect(['//likes/pagelikecomment', 'post' => $id]);
-            }
-        }       
-
-        return $this->render('create', [
-            'model' => $model,
-        ]);
-    }
+    }    
 
     /**
      * Updates an existing Comment model.

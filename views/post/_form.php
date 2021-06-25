@@ -19,8 +19,12 @@ use app\models\Post;
         }
      ?>
 
-    <?= $form->field($model, 'caption')->textArea(['maxlength' => true]) ?>    
-    
+    <div class="row">
+        <div class="col-sm-6">
+            <?= $form->field($model, 'caption')->textArea(['rows' => '6']) ?> 
+        </div>   
+    </div>
+
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
     </div>
