@@ -51,7 +51,7 @@ $this->title = 'Profile';
                   <div class="thumbnail">                       
                        <img src=<?="/".$allPost[$key]->image_url ?>  >      
                             <div class="caption"></div> 
-                            <?= Html::a('View', ['/likes/pagelikecomment', 'post' => $allPost[$key]->post_id], ['class'=>'btn btn-link']) ?>                           
+                            <?= Html::a('View', ['/comment/create', 'id' => $allPost[$key]->post_id], ['class'=>'btn btn-link']) ?>                           
                   </div>
               </div>
             <?php } else {  ?> 
