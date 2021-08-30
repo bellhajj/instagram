@@ -29,23 +29,28 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => 'Instagram',
+        //'brandLabel' => 'Instagram',
         //'brandLabel' => Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top',
+            'class' => 'navbar navbar-default navbar-fixed-top',
         ],
     ]);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
+            //['label' => 'Home', 'url' => ['/site/index']],
             ['label' => 'Create Account', 'url' => ['/users/create'],
             'visible' => Yii::$app->user->isGuest],
-            ['label' => 'Upload', 'url' => ['/post/user'],
+            ['label' => 'Create Post', 'url' => ['/post/create'],
             'visible' => !Yii::$app->user->isGuest],
-            ['label' => 'Post', 'url' => ['/post/homee'], 
-            'visible' => !Yii::$app->user->isGuest],
+            ['label' => 'All Post', 'url' => ['/post/homee'], 
+            'visible' => !Yii::$app->user->isGuest],                      
+                 
+            !Yii::$app->user->isGuest ? (
+                ['label' => 'Profile', 'url' => ['/users/profile', 'user' =>  Yii::$app->user->identity->user_id]]
+            ) : ['label' => ''],           
+            
             /*['label' => 'Users', 'url' => ['/users/index'],
             'visible' => !Yii::$app->user->isGuest],*/
             //['label' => 'About', 'url' => ['/site/about']],
@@ -60,7 +65,7 @@ AppAsset::register($this);
                     ['class' => 'btn btn-link logout']
                 )
                 . Html::endForm()
-                . '</li>'
+                . '</li>'                
             )
         ],
     ]);

@@ -4,79 +4,112 @@ use app\models\Likes;
 use app\models\Post;
 use yii\helpers\Html;
 
+use Carbon\Carbon;
+
 $this->title = 'Home';
 ?>
 
-<div class="container">
- <?php foreach($model as $key=>$value) { ?>
-    
-          <div style="border: 1px #A0A0A0 solid; width: 50%; margin-bottom: 20px">
+<div class="container" id="contain">
+    <?php 
+ rsort($model);
+ foreach($model as $key=>$value)  { ?>
 
-          <div class="row">
+    <div class="panel panel-default" style="width:50%">
+
+        <div class="row">
             <div class="col-sm-4">
-                <strong><?= Html::a(Users::findIdentity($model[$key])->username, ['/users/profile', 'user' => $model[$key]->user_id], ['class'=>'btn btn-link']) ?></strong>
+                <strong><?= Html::a($value->user->username, ['/users/profile', 'user' => $model[$key]->user_id], ['class'=>'btn btn-link']) ?></strong>
             </div>
-          </div>
+        </div>
 
-          <img src=<?="/".$model[$key]->image_url ?> alt=<?= $model[$key]->caption ?> class="img-responsive">
+        <img src=<?="/".$model[$key]->image_url ?> alt=<?= $model[$key]->caption ?> class="img-responsive">
 
-          <div class="row" style="padding-left: 10px; padding-top: 5px">           
+        <div class="row" style="padding-left: 10px; padding-top: 5px">
             <div class="col-sm-4">
-            <?php if(Post::checkLike($model[$key]->user_id, $model[$key]->post_id)) {  ?>     
-                <button type="button" class="btn btn-success" onclick="f2( <?php echo $model[$key]->post_id ?> , <?php echo $model[$key]->user_id ?> )">Unlike</button>                
-            <?php } else { ?>
-                <button type="button" class="btn btn-primary" onclick="f1( <?php echo $model[$key]->post_id ?> , <?php echo $model[$key]->user_id ?>  )">Like</button>                
-            <?php } ?>            
-            <?= Html::a('Comment', ['/comment/create', 'id' => $model[$key]->post_id], ['class'=>'btn btn-info']) ?>
+                <?php if(Post::checkLike($model[$key]->user_id, $model[$key]->post_id)) {  ?>
+                <button type="button" class="btn btn-success"
+                    onclick="unlikeFunction( <?php echo $model[$key]->post_id ?> , <?php echo $model[$key]->user_id ?> )">Unlike</button>
+                <?php } else { ?>
+                <button type="button" class="btn btn-primary"
+                    onclick="likeFunction( <?php echo $model[$key]->post_id ?> , <?php echo $model[$key]->user_id ?>  )">Like</button>
+                <?php } ?>
+                <?= Html::a('Comment', ['/comment/create', 'id' => $model[$key]->post_id, 'user'=> $model[$key]->user_id], ['class'=>'btn btn-info']) ?>
             </div>
-          </div>
-          <div class="row" style="padding-left: 10px; padding-top: 5px">
+        </div>
+        <div class="row" style="padding-left: 10px; padding-top: 5px">
             <div class="col-sm-4">
                 <strong><?= Likes::calculateLikeCount($model[$key]->post_id) ?> likes</strong>
             </div>
-          </div>         
-          
-          <div class="caption" style="padding-left: 10px; padding-top: 5px">            
-            <p><?= $model[$key]->caption ?></p>
-          </div>        
-          </div>
+        </div>
 
- <?php } ?>
+        <div class="caption" style="padding-left: 10px; padding-top: 5px">
+            <p>
+                <span><strong><?= $value->user->username ?></strong></span>
+                <?= $model[$key]->caption ?>
+            </p>
+        </div>
+        <?php $j = 1 ?>
+        <div class="caption" style="padding-left: 10px; padding-top: 5px">
+            <?php foreach($commentsWithUsers as $key1=>$value1) { ?>
+            <?php if($model[$key]->post_id === $value1->post->post_id){ ?>
+            <span><strong><?= $value1->user->username ?></strong></span>
+            <?= $value1['text'] ?>
+            <?php $j++; ?>
+            <br>
+            <?php if($j > 2){ ?>
+            <?= Html::a('View all Comment', ['/comment/create', 'id' => $model[$key]->post_id, 'user' => $model[$key]->user_id], ['class'=>'btn btn-link']) ?>
+            <?php break; ?>
+            <?php } ?>
+            <?php } ?>
+            <?php } ?>
+        </div>
+
+        <div class="row" style="padding-left: 10px; padding-top: 10px">
+            <div class="col-sm-4">
+                <span><?=  Carbon::create($model[$key]->date_posted)->diffForHumans()  ?></span>
+            </div>
+        </div>
+
+    </div>
+
+    <?php } ?>
 
 </div>
 
 <script>
-
-function f2(p, u){
-    $.ajax({        
+function unlikeFunction(post_id, user_id) {
+    $.ajax({
         type: 'POST',
-        url:  '/likes/unlike',
+        url: '/likes/unlike',
         data: {
-            id: p,
-            user: u
-        }, success: function(res) {   
-            console.log("Success"); 
-            location.reload(true);           
-        }, error: function(res) {
+            id: post_id,
+            user: user_id
+        },
+        success: function(res) {
+            console.log("Success");
+            $("#contain").load(location.href + " #contain");
+        },
+        error: function(res) {
             console.log("server error");
         }
     });
-    }
+}
 
-    function f1(p, u){
-    $.ajax({        
+function likeFunction(post_id, user_id) {
+    $.ajax({
         type: 'POST',
-        url:  '/likes/like',
+        url: '/likes/like',
         data: {
-            id: p,
-            user: u
-        }, success: function(res) {                                
-            console.log("Success");  
-            location.reload(true);         
-        }, error: function(res) {
+            id: post_id,
+            user: user_id
+        },
+        success: function(res) {
+            console.log("Success");
+            $("#contain").load(location.href + " #contain");
+        },
+        error: function(res) {
             console.log("server error");
         }
     });
-    }   
-
+}
 </script>

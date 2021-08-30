@@ -17,11 +17,11 @@ $this->params['breadcrumbs'][] = ['label' => 'Users', 'url' => ['index']];
    
     <?php if($model->checkFollow($model->user_id)) {  ?>
     <p>    
-    <?= Html::button('Unfollow User', ['class' => 'btn btn-danger', 'onclick' => 'f2()']) ?>      
+    <?= Html::button('Unfollow User', ['class' => 'btn btn-danger', 'onclick' => 'unfollow()']) ?>      
     </p>
     <?php } else { ?>
     <p>    
-    <?= Html::button('Follow User', ['class' => 'btn btn-primary', 'onclick' => 'f1()']) ?>
+    <?= Html::button('Follow User', ['class' => 'btn btn-primary', 'onclick' => 'follow()']) ?>
     </p>
     <?php } ?>
      
@@ -42,7 +42,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Users', 'url' => ['index']];
 </div>
 <script>
 
-function f2(){
+function unfollow(){
     $.ajax({        
         type: 'POST',
         url:  '/follower/unfollow',
@@ -57,7 +57,7 @@ function f2(){
     });
     }
 
-    function f1(){
+    function follow(){
     $.ajax({        
         type: 'POST',
         url:  '/follower/follow',

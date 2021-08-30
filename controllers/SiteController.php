@@ -9,9 +9,11 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\Post;
 
 class SiteController extends Controller
 {
+    public $layout = 'home';
     /**
      * {@inheritdoc}
      */
@@ -53,7 +55,7 @@ class SiteController extends Controller
             ],
         ];
     }
-
+    
     /**
      * Displays homepage.
      *
@@ -71,13 +73,15 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
+        $m = Post::find()->all();
         if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
+            return $this->goHome();            
         }
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+            //return $this->goBack();            
+            return $this->redirect(['/post/homee',  'model' => $m]);
         }
 
         $model->password = '';
@@ -95,7 +99,9 @@ class SiteController extends Controller
     {
         Yii::$app->user->logout();
 
-        return $this->goHome();
+        //return $this->goHome();
+        return $this->redirect('login');
+        
     }
 
     /**

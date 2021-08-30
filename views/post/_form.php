@@ -12,12 +12,9 @@ use app\models\Post;
 <div class="post-form">
 
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
-    <?php if($model->post_id === null){ ?>
-    <?= $form->field($model, 'image')->fileInput() ?>
-    <?php } else { ?>
-    <?php $model->photos = Post::findOne($model->post_id)->image_url;         
-        }
-     ?>
+    
+    <?= $form->field($model, 'image')->fileInput() ?>   
+     
 
     <div class="row">
         <div class="col-sm-6">

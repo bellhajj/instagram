@@ -64,8 +64,17 @@ class UsersController extends Controller
     public function actionProfile($user){
 
         $model = Users::find()->where(['user_id' => $user])->one();
-        $post = Post::find()->all();
-        return $this->render('profile', ['model' => $model, 'post' => $post]);
+        $postCount = Post::find()->where(['user_id' => $user])->count();
+        $followerCount = Follower::find()->where(['user_id' => $user])->count();
+        $followingCount = Follower::find()->where(['user_id_following' => $user])->count();
+        $post_all =  Post::find()->where(['user_id' => $user])->all();
+        return $this->render('profile', [
+            'model' => $model, 
+            'postCount' => $postCount,
+            'followerCount' => $followerCount,
+            'followingCount' => $followingCount,
+            'post_all' => $post_all
+        ]);
     }
    
 
@@ -104,7 +113,8 @@ class UsersController extends Controller
             if ($model->save(false)) {          
                 Yii::$app->session->setFlash('success', 'Your account was created successfully. 
                 Use your credential to login');           
-                return $this->goHome();
+                //return $this->goHome();
+                return $this->redirect(['/site/login']);
             }
             }  
         }

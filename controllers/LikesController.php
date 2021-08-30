@@ -63,13 +63,6 @@ class LikesController extends Controller
         }
     }
 
-    /*public function actionPagelikecomment($post){
-        //$newComment = new Comment();
-        $model = Post::find()->where(['post_id' => $post])->one();
-        $comments = Comment::find()->where(['post_id' => $post])->all();
-        return $this->render('//post/vue', ['model' => $model, 'comment' => $comments]);
-    }*/
-
     public function actionUnlike(){
 
         $postData =  Yii::$app->request->post();             

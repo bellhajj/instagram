@@ -11,6 +11,8 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 
 use app\models\Post;
+use app\models\Likes;
+use app\models\Users;
 
 /**
  * CommentController implements the CRUD actions for Comment model.
@@ -77,11 +79,14 @@ class CommentController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($id)
+    public function actionCreate($id, $user)
     {
         $newComment = new Comment();
-        $model = Post::find()->where(['post_id' => $id])->one(); 
-        $comments = Comment::find()->where(['post_id' => $id])->all();
+        $model = Post::find()->where(['post_id' => $id])->one();        
+        $user = Users::find()->where(['user_id' => $user])->one()->username;
+        $commentsWithUsers = Comment::find()->joinWith(['user'])->where(['post_id' => $id])->all();
+        $likes = Likes::calculateLikeCount($id);
+        
         if ($newComment->load(Yii::$app->request->post())){
             $newComment->user_id =  Yii::$app->user->identity->user_id;
             $newComment->post_id = $id;
@@ -91,9 +96,11 @@ class CommentController extends Controller
         }    
 
         return $this->render('create', [
-            'newComment' => $newComment,
-            'comment' => $comments,
-            'model' => $model
+            'newComment' => $newComment,            
+            'user' => $user,
+            'model' => $model,
+            'likeCount' => $likes,
+            'commentsWithUsers' => $commentsWithUsers
         ]);
     }    
 

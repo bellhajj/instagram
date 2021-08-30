@@ -19,11 +19,11 @@ $this->params['breadcrumbs'][] = ['label' => 'Posts', 'url' => ['index']];
 
     <?php if($model->checkLike($model->user_id, $model->post_id)) {  ?>    
     <p>    
-    <?= Html::button('Unlike', ['class' => 'btn btn-warning', 'onclick' => 'f2()']) ?>     
+    <?= Html::button('Unlike', ['class' => 'btn btn-warning', 'onclick' => 'unlike()']) ?>     
     </p>
     <?php } else { ?>
     <p>    
-    <?= Html::button('Like', ['class' => 'btn btn-primary', 'onclick' => 'f1()']) ?>
+    <?= Html::button('Like', ['class' => 'btn btn-primary', 'onclick' => 'like()']) ?>
     </p>
     <?php } ?>    
 
@@ -54,7 +54,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Posts', 'url' => ['index']];
 
 <script>
 
-function f2(){
+function unlike(){
     $.ajax({        
         type: 'POST',
         url:  '/likes/unlike',
@@ -70,7 +70,7 @@ function f2(){
     });
     }
 
-    function f1(){
+    function like(){
     $.ajax({        
         type: 'POST',
         url:  '/likes/like',

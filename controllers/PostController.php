@@ -10,6 +10,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
 use app\models\Likes;
+use app\models\Comment;
 use yii\filters\AccessControl;
 
 /**
@@ -61,8 +62,9 @@ class PostController extends Controller
 
     public function actionHomee(){
         
-        $model = Post::find()->all();
-        return $this->render('homee', ['model' => $model]);
+        $model = Post::find()->joinWith(['user'])->all();  
+        $commentsWithUsers = Comment::find()->joinWith(['user','post'])->all();      
+        return $this->render('homee', ['model' => $model, 'commentsWithUsers'=>$commentsWithUsers]);
     }
 
     public function actionUser(){

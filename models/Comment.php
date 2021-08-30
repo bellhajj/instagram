@@ -35,7 +35,7 @@ class Comment extends \yii\db\ActiveRecord
             [['user_id', 'post_id', 'text'], 'required'],
             [['user_id', 'post_id'], 'integer'],
             [['date_posted'], 'safe'],
-            [['text'], 'string', 'max' => 50],
+            [['text'], 'string', 'max' => 70],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['user_id' => 'user_id']],
             [['post_id'], 'exist', 'skipOnError' => true, 'targetClass' => Post::className(), 'targetAttribute' => ['post_id' => 'post_id']],
         ];
@@ -54,6 +54,7 @@ class Comment extends \yii\db\ActiveRecord
             'date_posted' => 'Date Posted',
         ];
     }
+   
 
     /**
      * Gets query for [[User]].
